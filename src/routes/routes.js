@@ -2,9 +2,11 @@ const connection = require('../database/connection')
 const express = require('express')
 const router = express.Router()
 const clienteController = require('../controllers/clienteController')
-const produtoController = require('../controllers/produtoController')
 
 router.post('/novoCliente', clienteController.novoCliente)
-router.post('/novoProduto', produtoController.novoProduto)
+router.get('/clientes', clienteController.listarClientes)
+router.get('/cliente/:id', clienteController.listarUmCliente)
+router.put('/atualizar/cliente/:id', clienteController.atualizarCliente)
+router.delete('/delete/cliente/:id', clienteController.removerCliente)
 
 module.exports = router

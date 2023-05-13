@@ -15,7 +15,7 @@ response.json({message:"Cliente criado com sucesso!"})
         })
     }
 //Só pra não mostrar a senha do usuário
-    listarClientes(request, response){
+     listarClientes(request, response){
         database.select("id, cpf, nome, email, endereco").table("cliente_tb").then(clientes=>{
             console.log(clientes)
             response.json(clientes)

@@ -22,7 +22,6 @@ PRIMARY KEY (id)
 
 CREATE TABLE pedido_tb(
 id INT auto_increment not null,
-num_item INT,
 id_cliente INT,
 PRIMARY KEY (id),
 FOREIGN KEY(id_cliente) REFERENCES cliente_tb(id)

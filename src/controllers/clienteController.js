@@ -16,7 +16,7 @@ response.json({message:"Cliente criado com sucesso!"})
     }
 //Só pra não mostrar a senha do usuário
      listarClientes(request, response){
-        database.select("id, cpf, nome, email, endereco").table("cliente_tb").then(clientes=>{
+        database.select("id", "cpf", "nome", "email", "endereco").table("cliente_tb").then(clientes=>{
             console.log(clientes)
             response.json(clientes)
         }).catch(error=>{
@@ -25,7 +25,7 @@ response.json({message:"Cliente criado com sucesso!"})
     }
     listarUmCliente(request, response){
         const id = request.params.id;
-        database.select("id, cpf, nome, email, endereco").table("cliente_tb").where({id:id}).then(cliente=>{
+        database.select("id", "cpf", "nome", "email", "endereco").table("cliente_tb").where({id:id}).then(cliente=>{
             response.json(cliente)
         }).catch(error=>{
             console.log(error)

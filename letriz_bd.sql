@@ -17,15 +17,18 @@ nome VARCHAR(50),
 editora  VARCHAR(50),
 preco DECIMAL(10,2),
 estoque INT,
+estado VARCHAR(10),
 PRIMARY KEY (id)
 );
-
+alter table produto_tb add estado VARCHAR(10);
+select * from produto_tb;
 CREATE TABLE pedido_tb(
 id INT auto_increment not null,
 id_cliente INT,
 PRIMARY KEY (id),
 FOREIGN KEY(id_cliente) REFERENCES cliente_tb(id)
 );
+
 
 CREATE TABLE item_pedido_tb(
 id_pedido INT,
@@ -36,6 +39,17 @@ PRIMARY KEY(id_pedido, num_item),
 FOREIGN KEY(id_pedido) REFERENCES pedido_tb(id),
 FOREIGN KEY (id_produto) REFERENCES produto_tb(id)
 );
+
+CREATE TABLE pedido_finalizado_tb(
+id_finalizado INT auto_increment not null,
+id_pedido INT,
+data_pedido date,
+valor_total DECIMAL(10,2),
+forma_pagamento VARCHAR(50),
+PRIMARY KEY (id_finalizado),
+FOREIGN KEY (id_pedido) REFERENCES pedido_tb (id)
+);
+
  /*Funtion que calcula o total do pedido
 DELIMITER $$
 CREATE FUNCTION calcular_preco_total_pedido(id_pedido INT) RETURNS DECIMAL(10,2)
@@ -48,21 +62,25 @@ BEGIN
     WHERE item_pedido_tb.id_pedido = id_pedido;
     RETURN preco_total;
 END$$
-DELIMITER ;
-
-Procedure que verifica o login, se a senha inserida está de acordo com o cpf cadastrado no sistema
-DELIMITER $$
-CREATE PROCEDURE verificar_login(IN p_cpf VARCHAR(11), IN p_senha VARCHAR(50), OUT p_resultado INT)
-BEGIN
-    DECLARE senha_correta VARCHAR(50);
-    SELECT senha INTO senha_correta FROM cliente_tb WHERE cpf = p_cpf;
-    IF senha_correta = p_senha THEN
-        SET p_resultado = 1;
-    ELSE
-        SET p_resultado = 0;
-    END IF;
-END$$
 DELIMITER ;*/
+
+
+DELIMITER //
+CREATE PROCEDURE validar_login(IN p_email VARCHAR(255), IN p_senha VARCHAR(255))
+BEGIN
+    DECLARE v_count INT;
+    -- Verificar se o email e a senha correspondem a um usuário válido
+    SELECT COUNT(*) INTO v_count
+    FROM cliente_tb
+    WHERE email = p_email AND senha = p_senha;
+    -- Retornar o resultado da validação
+    IF v_count = 1 THEN
+        SELECT 'Login válido' AS mensagem;
+    ELSE
+        SELECT 'Login inválido' AS mensagem;
+    END IF;
+END //
+DELIMITER ;
 
 /*drop table item_pedido_tb;
 drop table pedido_tb;

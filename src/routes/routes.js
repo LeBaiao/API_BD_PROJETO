@@ -5,9 +5,10 @@ const clienteController = require('../controllers/clienteController')
 const produtoController = require('../controllers/produtoController')
 const pedidoController = require('../controllers/pedidoController')
 const pedidoFinalizadoController = require('../controllers/pedidoFinalizadoController')
+const loginController = require('../controllers/loginController')
 
 //rotas de cliente
-router.post('/novoCliente', clienteController.novoCliente)
+router.post('/novocliente', clienteController.novoCliente)
 router.get('/clientes', clienteController.listarClientes)
 router.get('/cliente/:id', clienteController.listarUmCliente)
 router.put('/atualizar/cliente/:id', clienteController.atualizarCliente)
@@ -19,7 +20,7 @@ router.post('/novoProduto', produtoController.novoProduto)
 router.get('/produtos', produtoController.listarProduto)
 router.get('/produto/:id', produtoController.listarUmProduto)
 router.put('/atualizar/produto/:id', produtoController.atualizarProduto)
-router.delete('/deletar/produto/:id', produtoController.removerProduto)
+router.delete('/delete/produto/:id', produtoController.removerProduto)
 
 
 //rotas de pedido
@@ -35,5 +36,7 @@ router.get('/pedidofinalizado/:id', pedidoFinalizadoController.listarUmPedidoFin
 router.get('/pedidofinalizado/cliente/:id', pedidoFinalizadoController.listarPedidoByCliente); //buscar pedido finalizado por cliente
 router.post('/novopedidofinalizado', pedidoFinalizadoController.novoPedidoFinalizado);
 
+//login
+router.post('/login', loginController.validarLogin);
 
 module.exports = router

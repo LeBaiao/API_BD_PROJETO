@@ -12,6 +12,7 @@ class pedidoFinalizadoController {
             'pedido_finalizado_tb.valor_total',
             'cliente_tb.id',
             'cliente_tb.nome',
+            'cliente_tb.endereco',
             'pedido_finalizado_tb.forma_pagamento'
           )
           .from('cliente_tb')
@@ -30,7 +31,8 @@ class pedidoFinalizadoController {
                   forma_pagamento: pedido.forma_pagamento,
                   cliente: {  //formatação do json
                     id: pedido.id,
-                    nome: pedido.nome
+                    nome: pedido.nome,
+                    endereco: pedido.endereco
                   }
                  
                 };
@@ -57,6 +59,7 @@ listarUmPedidoFinalizado(request, response) {
         'pedido_finalizado_tb.valor_total',
         'cliente_tb.id',
         'cliente_tb.nome',
+        'cliente_tb.endereco',
         'pedido_finalizado_tb.forma_pagamento'
       )
       .from('cliente_tb')
@@ -81,6 +84,7 @@ listarUmPedidoFinalizado(request, response) {
         'pedido_finalizado_tb.valor_total',
         'cliente_tb.id',
         'cliente_tb.nome',
+        'cliente_tb.endereco',
         'pedido_finalizado_tb.forma_pagamento'
       )
       .from('cliente_tb')

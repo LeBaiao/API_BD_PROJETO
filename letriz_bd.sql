@@ -22,6 +22,8 @@ PRIMARY KEY (id)
 );
 alter table produto_tb add estado VARCHAR(10);
 select * from produto_tb;
+
+
 CREATE TABLE pedido_tb(
 id INT auto_increment not null,
 id_cliente INT,
@@ -50,19 +52,21 @@ PRIMARY KEY (id_finalizado),
 FOREIGN KEY (id_pedido) REFERENCES pedido_tb (id)
 );
 
- /*Funtion que calcula o total do pedido
-DELIMITER $$
-CREATE FUNCTION calcular_preco_total_pedido(id_pedido INT) RETURNS DECIMAL(10,2)
+DELIMITER //
+CREATE FUNCTION sp_rendimento_cliente (cliente_id INT)
+RETURNS DECIMAL(10, 2)
+DETERMINISTIC
 BEGIN
-    DECLARE preco_total DECIMAL(10,2);
-    SELECT SUM(item_pedido_tb.quantidade * produto_tb.preco)
-    INTO preco_total
-    FROM item_pedido_tb
-    INNER JOIN produto_tb ON item_pedido_tb.id_produto = produto_tb.id
-    WHERE item_pedido_tb.id_pedido = id_pedido;
-    RETURN preco_total;
-END$$
-DELIMITER ;*/
+    DECLARE total DECIMAL(10, 2);
+
+    SELECT SUM(pf.valor_total) INTO total
+    FROM pedido_tb p
+    JOIN pedido_finalizado_tb pf ON p.id = pf.id_pedido
+    WHERE p.id_cliente = cliente_id;
+
+    RETURN total;
+END //
+DELIMITER ;
 
 
 DELIMITER //
@@ -82,9 +86,26 @@ BEGIN
 END //
 DELIMITER ;
 
-/*drop table item_pedido_tb;
-drop table pedido_tb;
-drop table cliente_tb;
-drop table produto_tb;*/
+DELIMITER //
+CREATE TRIGGER trg_valida_valor_produto
+BEFORE INSERT ON produto_tb
+FOR EACH ROW
+BEGIN
+    IF NEW.preco < 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'O valor do produto não pode ser negativo.';
+    END IF;
+END //
+DELIMITER ;
+
+
+CREATE VIEW vx_pedidos AS
+SELECT itens.*, c.id, c.nome AS "Cliente", p.nome AS "Produto"
+FROM item_pedido_tb itens JOIN produto_tb p
+ON itens.id_produto =  p.id
+JOIN pedido_tb ped
+ON itens.id_pedido = ped.id
+JOIN cliente_tb c
+ON c.id = ped.id_cliente
+
 
 

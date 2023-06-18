@@ -88,7 +88,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER trg_valida_valor_produto
-BEFORE INSERT ON produto_tb
+AFTER INSERT ON produto_tb
 FOR EACH ROW
 BEGIN
     IF NEW.preco < 0 THEN

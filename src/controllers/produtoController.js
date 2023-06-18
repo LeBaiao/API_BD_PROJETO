@@ -1,19 +1,36 @@
 const database = require('../database/connection')
 
 class produtoController {
-    novoProduto(request, response){
 
-        const{nome, editora, preco, estoque} = request.body
-
-        console.log(nome, editora, preco, estoque)
-
-        database.insert({nome, editora, preco, estoque}).table("produto_tb").then(data=>{
-            console.log(data)
-            response.json({message:"Produto inserido com sucesso!"})
-        }).catch(error=>{
-            console.log(error)
-        })
-    }
+    //essa função verifica se existe alguma mensagem de erro configurada (no caso a trigger), se tiver, retorna a mensagem 
+    async novoProduto(request, response) {
+        const { nome, editora, preco, estoque } = request.body;
+      
+        try {
+          const result = await database
+            .insert({ nome, editora, preco, estoque })
+            .table('produto_tb');
+      
+          console.log(result);
+      
+          // Verifica se o resultado possui uma propriedade "message" definida
+          if (result && result.message) {
+            response.json({ message: result.message });
+          } else {
+            response.json({ message: 'Produto inserido com sucesso!' });
+          }
+        } catch (error) {
+          console.error(error);
+      
+          // Verifica se o erro possui uma propriedade "message" definida
+          if (error && error.message) {
+            response.status(500).json({ error: error.message });
+          } else {
+            response.status(500).json({ error: 'Ocorreu uma falha ao inserir o produto' });
+          }
+        }
+      }
+      
 
     listarProduto(request, response){
         database.select("*").from("produto_tb").then(produtos=>{

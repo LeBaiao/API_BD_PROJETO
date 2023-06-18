@@ -6,6 +6,7 @@ const produtoController = require('../controllers/produtoController')
 const pedidoController = require('../controllers/pedidoController')
 const pedidoFinalizadoController = require('../controllers/pedidoFinalizadoController')
 const loginController = require('../controllers/loginController')
+const rendimentoClienteController = require('../controllers/rendimentoClienteController')
 
 //rotas de cliente
 router.post('/novocliente', clienteController.novoCliente)
@@ -38,5 +39,9 @@ router.post('/novopedidofinalizado', pedidoFinalizadoController.novoPedidoFinali
 
 //login
 router.post('/login', loginController.validarLogin);
+
+//Total gasto pelo cliente em todas as compras em nossa loja
+router.get('/rendimento/:id', rendimentoClienteController.rendimentoCliente);
+router.get('/rendimentogeral', rendimentoClienteController.rendimentoClientes);
 
 module.exports = router

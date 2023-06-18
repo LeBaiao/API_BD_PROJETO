@@ -96,31 +96,42 @@ class pedidoController{
       
       //pega só 1 pedido pelo id
       //funcionando tbm
-      getPedido(request, response) {
+      async  getPedido(request, response) {
         const id = request.params.id;
-        database.select('*').from('pedido_tb').where({id: id})
-          .then(pedido => {
-            if (pedido.length > 0) {
-              const promises = pedido.map(pedido => {
-                return database.select('*').from('item_pedido_tb').where({id_pedido: pedido.id})
-                  .then(itensPedido => {
-                    pedido.itens = itensPedido;
-                    return pedido;
-                  })
-              });
-              return Promise.all(promises);
-            } else {
-              throw new Error('Pedido não encontrado');
-            }
-          })
-          .then(pedido => {
-            response.json(pedido[0]);
-          })
-          .catch(error => {
-            console.log(error);
-            response.status(500).json({message: 'Erro ao obter pedido'});
-          });
-    }
+      
+        try {
+          const pedido = await database.select('*').from('pedido_tb').where({ id: id });
+      
+          if (pedido.length > 0) {
+            const promises = pedido.map(async (pedido) => {
+              const itensPedido = await database
+                .select('item_pedido_tb.*', 'produto_tb.preco')
+                .from('item_pedido_tb')
+                .innerJoin('produto_tb', 'item_pedido_tb.id_produto', 'produto_tb.id')
+                .where({ id_pedido: pedido.id });
+      
+              const valorTotal = itensPedido.reduce((total, item) => {
+                return total + item.quantidade * item.preco;
+              }, 0);
+      
+              pedido.itens = itensPedido;
+              pedido.valor_total = valorTotal;
+      
+              return pedido;
+            });
+      
+            const pedidosComTotal = await Promise.all(promises);
+            response.json(pedidosComTotal[0]);
+          } else {
+            throw new Error('Pedido não encontrado');
+          }
+        } catch (error) {
+          console.error(error);
+          response.status(500).json({ message: 'Erro ao obter pedido' });
+        }
+      }
+      
+      
     
     //delete funcionando certinho
     removerPedido(request, response) {
